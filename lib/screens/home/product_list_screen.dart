@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../providers/cart_provider.dart';
 import '../../providers/product_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
@@ -152,7 +153,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       return ProductCard(
                         product: product,
                         onTap: () {},
-                        onAddToCart: () {},
+                        onAddToCart: () => context
+                            .read<CartProvider>()
+                            .addToCart(product),
                       );
                     },
                   ),

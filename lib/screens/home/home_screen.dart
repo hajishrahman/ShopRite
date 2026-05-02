@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/cart_provider.dart';
 import '../../providers/product_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/constants/app_constants.dart';
 import '../../widgets/product/product_card.dart';
 import '../auth/login_screen.dart';
+import '../cart/cart_screen.dart';
 import 'product_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -36,8 +38,13 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text(AppConstants.appName, style: AppTypography.headingSmall),
         actions: [
           IconButton(
-            icon: const Icon(Icons.shopping_cart_outlined),
-            onPressed: () {},
+            icon: Badge(
+              label: Text('${context.watch<CartProvider>().itemCount}'),
+              isLabelVisible: context.watch<CartProvider>().itemCount > 0,
+              child: const Icon(Icons.shopping_cart_outlined),
+            ),
+            onPressed: () => Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const CartScreen())),
           ),
           IconButton(
             icon: const Icon(Icons.logout),
@@ -104,7 +111,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: ProductCard(
                               product: product,
                               onTap: () {},
-                              onAddToCart: () {},
+                              onAddToCart: () => context
+                                  .read<CartProvider>()
+                                  .addToCart(product),
                             ),
                           );
                         },
@@ -143,7 +152,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         return ProductCard(
                           product: product,
                           onTap: () {},
-                          onAddToCart: () {},
+                          onAddToCart: () => context
+                              .read<CartProvider>()
+                              .addToCart(product),
                         );
                       },
                     ),
