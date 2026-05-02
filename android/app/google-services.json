@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "160163238746",
+    "firebase_url": "https://shopriteh111-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "shopriteh111",
+    "storage_bucket": "shopriteh111.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:160163238746:android:4d6edb17d2bc166d601963",
+        "android_client_info": {
+          "package_name": "com.example.shoprite"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3tj5AoRIrNE_rRHJ461V5ovHhveFUy4E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:160163238746:android:449ed42957456e75601963",
+        "android_client_info": {
+          "package_name": "com.shoprite.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3tj5AoRIrNE_rRHJ461V5ovHhveFUy4E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
