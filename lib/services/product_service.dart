@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/product_model.dart';
 
@@ -58,5 +59,14 @@ class ProductService {
       if (onSaleOnly == true && !p.isOnSale) return false;
       return true;
     }).toList();
+  }
+
+  Future<bool> checkConnectivity() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } catch (_) {
+      return false;
+    }
   }
 }
