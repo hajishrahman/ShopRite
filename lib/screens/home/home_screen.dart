@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
-import '../../providers/cart_provider.dart';
 import '../../providers/product_provider.dart';
+import '../../providers/cart_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/constants/app_constants.dart';
 import '../../widgets/product/product_card.dart';
 import '../auth/login_screen.dart';
+import '../analytics/analytics_screen.dart';
 import '../cart/cart_screen.dart';
 import 'product_list_screen.dart';
 
@@ -19,6 +20,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -31,7 +34,30 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final auth = context.read<AuthProvider>();
     final products = context.watch<ProductProvider>();
+    final cart = context.watch<CartProvider>();
 
+    final pages = [
+      _buildHome(context, products, cart, auth),
+      const AnalyticsScreen(),
+    ];
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) => setState(() => _selectedIndex = index),
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textSecondary,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Insights'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHome(BuildContext context, ProductProvider products, CartProvider cart, AuthProvider auth) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -39,22 +65,18 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: Badge(
-              label: Text('${context.watch<CartProvider>().itemCount}'),
-              isLabelVisible: context.watch<CartProvider>().itemCount > 0,
+              label: Text('${cart.itemCount}'),
+              isLabelVisible: cart.itemCount > 0,
               child: const Icon(Icons.shopping_cart_outlined),
             ),
-            onPressed: () => Navigator.push(context,
-                MaterialPageRoute(builder: (_) => const CartScreen())),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CartScreen())),
           ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
               await auth.signOut();
               if (context.mounted) {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const LoginScreen()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
               }
             },
           ),
@@ -70,27 +92,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     GestureDetector(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const ProductListScreen())),
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProductListScreen())),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
                           color: AppColors.surface,
                           borderRadius: BorderRadius.circular(14),
-                          boxShadow: [
-                            BoxShadow(color: AppColors.cardShadow, blurRadius: 4)
-                          ],
+                          boxShadow: [BoxShadow(color: AppColors.cardShadow, blurRadius: 4)],
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.search,
-                                color: AppColors.textSecondary),
+                            const Icon(Icons.search, color: AppColors.textSecondary),
                             const SizedBox(width: 8),
-                            Text('Search products...',
-                                style: AppTypography.bodyMedium),
+                            Text('Search products...', style: AppTypography.bodyMedium),
                           ],
                         ),
                       ),
@@ -111,9 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: ProductCard(
                               product: product,
                               onTap: () {},
-                              onAddToCart: () => context
-                                  .read<CartProvider>()
-                                  .addToCart(product),
+                              onAddToCart: () => context.read<CartProvider>().addToCart(product),
                             ),
                           );
                         },
@@ -125,10 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Text('All Products', style: AppTypography.headingSmall),
                         TextButton(
-                          onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const ProductListScreen())),
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProductListScreen())),
                           child: const Text('See All'),
                         ),
                       ],
@@ -137,24 +146,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 0.58,
                         crossAxisSpacing: 12,
                         mainAxisSpacing: 12,
                       ),
-                      itemCount: products.allProducts.length > 6
-                          ? 6
-                          : products.allProducts.length,
+                      itemCount: products.allProducts.length > 6 ? 6 : products.allProducts.length,
                       itemBuilder: (context, index) {
                         final product = products.allProducts[index];
                         return ProductCard(
                           product: product,
                           onTap: () {},
-                          onAddToCart: () => context
-                              .read<CartProvider>()
-                              .addToCart(product),
+                          onAddToCart: () => context.read<CartProvider>().addToCart(product),
                         );
                       },
                     ),

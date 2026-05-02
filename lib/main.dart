@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'core/theme/app_theme.dart';
+import 'providers/analytics_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
 import 'screens/auth/login_screen.dart';
@@ -22,6 +23,12 @@ class ShopRiteApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProxyProvider<CartProvider, AnalyticsProvider>(
+          create: (_) => AnalyticsProvider(),
+          update: (_, cartProvider, analyticsProvider) {
+            return analyticsProvider!..update(cartProvider);
+          },
+        ),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
       ],
       child: MaterialApp(
