@@ -48,6 +48,8 @@ class AnalyticsScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     _CategoryBarChart(analytics: analytics),
                     const SizedBox(height: 24),
+                    _SmartTipCard(analytics: analytics),
+                    const SizedBox(height: 24),
                   ],
                   Text('Cart Breakdown', style: AppTypography.headingSmall),
                   const SizedBox(height: 16),
@@ -240,6 +242,63 @@ class _CartBreakdown extends StatelessWidget {
             ),
           );
         }).toList(),
+      ),
+    );
+  }
+}
+
+class _SmartTipCard extends StatelessWidget {
+  final AnalyticsProvider analytics;
+  const _SmartTipCard({required this.analytics});
+
+  String _generateTip() {
+    if (analytics.topCategories.isEmpty) return '';
+    final top = analytics.topCategories.first;
+    final percent = analytics.totalSpending > 0
+        ? (top.value / analytics.totalSpending * 100).toStringAsFixed(0)
+        : '0';
+    final category = top.key;
+
+    if (int.parse(percent) >= 60) {
+      return 'You spend $percent% of your budget on $category. Consider looking for bundle deals next time!';
+    } else if (int.parse(percent) >= 40) {
+      return 'Your top category is $category at $percent% of your cart. You have a good spending spread!';
+    } else {
+      return 'Your spending is well balanced across categories. Great shopping habits!';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (analytics.topCategories.isEmpty) return const SizedBox();
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, AppColors.secondary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.lightbulb, color: Colors.white, size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Smart Tip', style: AppTypography.bodyLarge.copyWith(
+                  color: Colors.white, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(_generateTip(), style: AppTypography.bodySmall.copyWith(
+                  color: Colors.white.withValues(alpha: 0.9))),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

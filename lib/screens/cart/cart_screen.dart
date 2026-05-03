@@ -40,6 +40,46 @@ class CartScreen extends StatelessWidget {
             )
           : Column(
               children: [
+                Container(
+                  margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [BoxShadow(color: AppColors.cardShadow, blurRadius: 4)],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            cart.shippingCost == 0
+                                ? '🎉 You got FREE Shipping!'
+                                : 'Add Rs. ${(AppConstants.freeShippingThreshold - cart.subtotal).toStringAsFixed(0)} more for FREE Shipping',
+                            style: AppTypography.bodySmall.copyWith(
+                              color: cart.shippingCost == 0 ? AppColors.accent : AppColors.textPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: LinearProgressIndicator(
+                          value: (cart.subtotal / AppConstants.freeShippingThreshold).clamp(0.0, 1.0),
+                          minHeight: 8,
+                          backgroundColor: AppColors.background,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            cart.shippingCost == 0 ? AppColors.accent : AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.all(16),
